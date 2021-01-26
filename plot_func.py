@@ -287,9 +287,9 @@ def plot_diff_3(slice1,title,lim1,lim2,col_bar):
     ticks6 = [-50,-40,-30,-20,-10,0,10,20,30,40,50] # this is a percentage change plot
     
     if flag == True:
-        ticks7 = np.linspace(lim1,-lim1,15)
+        ticks7 = np.linspace(lim1,-lim1,10)
     else:
-        ticks7 = np.linspace(-lim2,lim2,15)
+        ticks7 = np.linspace(-lim2,lim2,10)
     ticks6 = ticks7.copy()
     ticks6 = np.around(ticks6,decimals = 1)
     ticks6_label = [str(o) for o in ticks6]
