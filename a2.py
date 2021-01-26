@@ -264,8 +264,10 @@ for i in flag:
         plt.ylabel('altitude (km)')
         #plt.title('Total Particle number concentration (cm'+u'\u207B\u00B3'+')')
         #plt.title('N_Total change (sulphurless+purebiogenic) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
-        plt.title('N_Total change (sulphurless + biogen) - (sulphurless)(cm'+u'\u207B\u00B3'+') u-cb602 - u-ca440' )
-        plt.savefig('sulphurless_purebiogenic.png',dpi = 500)
+        plt.title('N_Total change (sulphurless + biogen) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
+
+        img_filepath = '/home/users/eeara/no_sulphur_new/images/'
+        plt.savefig(img_filepath+'sulphurless_purebiogenic.png',dpi = 500)
         plt.show()
         
         print(new1)       
