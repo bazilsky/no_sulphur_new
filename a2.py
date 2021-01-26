@@ -232,7 +232,7 @@ for i in range(1):
         #plot_diff(in_eff,ind_title,-550,551,100)
         #pltfunc.plot_diff(in_eff,ind_title,np.min(in_eff.data),np.max(in_eff.data),'seismic')
         pltfunc.plot_diff_3(in_eff,ind_title,-5,5,'coolwarm')
-        plt.savefig('indir_effect_nosulphur_2.png',dpi = 500)
+        plt.savefig(image_path + 'indir_effect_nosulphur_2.png',dpi = 500)
 
         
         print('Direct radiative forcing -- SHORTWAVE , ',np.mean(di_eff.data))
