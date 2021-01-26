@@ -247,7 +247,7 @@ for i in range(1):
         #plot_diff(c,temp_str,-5000,5001,500) # for 5km
         #plot_diff(c,temp_str,-10000,10001,1000) # for 11km
         #plot_diff(c,temp_str,-600,601,100) # for 11km
-        #plot_diff(c,temp_str,-100,101,20) # for 1km
+        plot_diff(c,temp_str,-100,101,20) # for 1km
         print ('max = ', np.max(c)) 
         print ('min = ', np.min(c))
         image_filepath = '/home/users/eeara/no_sulphur_new/images/'
