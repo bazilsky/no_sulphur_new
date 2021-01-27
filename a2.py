@@ -171,9 +171,11 @@ for i in flag:
     cn_file_org = 'All_months_m01s38i437_CN__NUMBER_CONCENTRATION____________.nc' #units are in /cm3
     nuc_file = 'All_months_m01s38i504_number_concentration_nucleation_mode.nc'
     ait_file = 'All_months_m01s38i505_number_concentration_aitken_mode.nc'
+    aitins_file = 'All_months_m01s38i508_number_concentration_aitken_insoluble.nc'
     acc_file = 'All_months_m01s38i506_number_concentration_accumulation_mode.nc'
+    cor_file = 'All_months_m01s38i507_number_concentration_coarse_mode_insoluble.nc' 
     
-    cn_file = ait_file
+    cn_file = cor_file
     
     if cn_file!=cn_file_org:
         factor = 1e6
@@ -275,10 +277,10 @@ for i in flag:
         plt.ylabel('altitude (km)')
         #plt.title('Total Particle number concentration (cm'+u'\u207B\u00B3'+')')
         #plt.title('N_Total change (sulphurless+purebiogenic) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
-        plt.title('aitken_ mode change (sulphurless + biogen) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
+        plt.title('Coarse mode change (sulphurless + biogen) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
 
         img_filepath = '/home/users/eeara/no_sulphur_new/images/'
-        plt.savefig(img_filepath+'ait_sulphurless_purebiogenic.png',dpi = 500)
+        plt.savefig(img_filepath+'cor_sulphurless_purebiogenic.png',dpi = 500)
         plt.show()
         
         print(new1)       
