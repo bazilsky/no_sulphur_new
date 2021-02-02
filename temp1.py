@@ -37,10 +37,6 @@ mpath1='/gws/nopw/j04/asci/eeara/model_runs/u-ca954/2017jan/' # present day with
 #mpath2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/2017jan/' # new basline sulphurless planet
 mpath2='/gws/nopw/j04/asci/eeara/model_runs/u-ca439/2017jan/' # present day planet
 
-mpath1='/gws/nopw/j04/asci/eeara/model_runs/u-cb802/All_months/' # present day with biogenic nucleation ON
-#mpath2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/2017jan/' # new basline sulphurless planet
-mpath2='/gws/nopw/j04/asci/eeara/model_runs/u-ca440/All_months/' # present day planet
-
 alt_path='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bf829/L1/'
 #alt_path='/gws/nopw/j04/gassp/hgordon/u-be424-noColinFix/L1/'
 #mpath2='/group_workspaces/jasmin2/gassp/eeara/model_runs/u-bc244/L1/'
@@ -168,9 +164,8 @@ for i in flag:
     trop_height = trop_height.collapsed('longitude',iris.analysis.MEAN)
     trop_height = trop_height/1000.0
     
-    cn_file = 'All_months_m01s38i437_CN__NUMBER_CONCENTRATION____________.nc'
-    #cn_file = '2017jan_m01s38i437_CN__NUMBER_CONCENTRATION____________.nc'
-    
+    #cn_file = 'All_months_m01s38i437_CN__NUMBER_CONCENTRATION____________.nc'
+    cn_file = '2017jan_m01s38i437_CN__NUMBER_CONCENTRATION____________.nc'
     #if i==0:
     if i%3==0:
         #new1=get_model_data(i,alt_data[i],i,mpath1)
@@ -179,11 +174,11 @@ for i in flag:
         new1 = iris.load(mpath1+cn_file)[0]
         new2 = iris.load(mpath2+cn_file)[0]
        
-        new1 = new1.collapsed('time',iris.analysis.MEAN)
-        #new1 = new1[5,:,:,:]
+        #new1 = new1.collapsed('time',iris.analysis.MEAN)
+        #new1 = new1[0,:,:,:]
         new1 = new1.collapsed('longitude',iris.analysis.MEAN)
-        #new2 = new2[5,:,:,:]
-        new2 = new2.collapsed('time',iris.analysis.MEAN)
+        #new2 = new2[0,:,:,:]
+        #new2 = new2.collapsed('time',iris.analysis.MEAN)
         new2 = new2.collapsed('longitude',iris.analysis.MEAN)
         
          
@@ -210,6 +205,13 @@ for i in flag:
             
         lnum_alt=alt_data[0:66]
         lat1=new1.coord('latitude').points
+        """
+        x,y=np.meshgrid(lat1,lnum_alt)
+        plt
+        #fig, axes= pl.plot(1, figsize=(12, 8))
+       
+
+        """
         x,y=np.meshgrid(lat1,lnum_alt)
         #plt.figure()
         #im=plt.imshow(data)   
@@ -264,10 +266,8 @@ for i in flag:
         plt.ylabel('altitude (km)')
         #plt.title('Total Particle number concentration (cm'+u'\u207B\u00B3'+')')
         #plt.title('N_Total change (sulphurless+purebiogenic) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
-        plt.title('N_Total change (sulphurless + biogen) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
-
-        img_filepath = '/home/users/eeara/no_sulphur_new/images/'
-        plt.savefig(img_filepath+'sulphurless_purebiogenic.png',dpi = 500)
+        plt.title('N_Total change (PD+purebiogenic) - (PD)(cm'+u'\u207B\u00B3'+') u-cb448 - u-ca76' )
+        plt.savefig('ntot_vertical_profile.eps',dpi = 500)
         plt.show()
         
         print(new1)       

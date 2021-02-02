@@ -82,10 +82,8 @@ for i in flag:
     #if i==0:
     if i%3==0:
         #new1=get_model_data(i,alt_data[i],i,mpath1)
-        #cond_sink_path = '/group_workspaces/jasmin2/asci/eeara/model_runs/u-bk340/All_months/'+'All_months_m01s38i576_condensation_sink.nc'
-        cond_sink_path = '/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz147/All_months/'+'All_months_m01s38i440_CCN_NO._CONCENTRN._(ACC+COR+AIT>35r).nc'
-        #cond_sink_path = '/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz871/All_months/'+'All_months_m01s38i440_CCN_NO._CONCENTRN._(ACC+COR+AIT>35r).nc'
-        #cond_sink_path = '/group_workspaces/jasmin2/asci/eeara/model_runs/u-bs405/All_months/'+'All_months_m01s34i072_mass_fraction_of_sulphur_dioxide_in_air.nc'
+        #cond_sink_path = '/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz147/All_months/'+'All_months_m01s38i440_CCN_NO._CONCENTRN._(ACC+COR+AIT>35r).nc'
+        cond_sink_path = '/gws/nopw/j04/asci/eeara/model_runs/u-cb815/2017jan/2017jan_m01s38i438_CCN_NO._CONCENTRN._(ACC+COR)________.nc'
         filepath = '/group_workspaces/jasmin2/asci/eeara/model_runs/u-bs405/All_months/'
         #filepath = '/group_workspaces/jasmin2/asci/eeara/model_runs/u-bs405/All_months/'
         temperature = iris.load('/home/users/eeara/CARIBIC_CODE/model_temperature.nc')[0]
@@ -96,35 +94,24 @@ for i in flag:
         max_arr = []
         model_temp = temperature.collapsed('time',iris.analysis.MEAN)
         model_temp = model_temp.collapsed('longitude',iris.analysis.MEAN)
-        model_temp = model_temp[0:66,:]
+        model_temp = model_temp[0:50,:]
         #model_temp.coord('model_level_number').points = alt_data[0:66]
         model_lat = model_temp.coord('latitude').points
         plt.figure()
-        """
-        for j in range(len(model_lat)):
-            #for k in range(len(model_temp.coord('model_level_number').points)):
-            max_index = np.where(model_temp[:,j].data==np.amax(model_temp[:,j].data))
-            print('value of j, max index =',j,max_index)
-            max_arr = np.append(max_arr,alt_data[max_index]) 
-        #plt.figure()
-        
-        plt.plot(model_lat,alt_data[max_index])
-        """
-         
 
         new1 = iris.load(cond_sink_path)[0]
         print(new1)
         #new1 = new1*(29.0/64.0)/1.0e-12 # converting mass fraction to pptv
         new1=new1.collapsed('longitude',iris.analysis.MEAN)
-        new1=new1.collapsed('time',iris.analysis.MEAN)
+        #new1=new1.collapsed('time',iris.analysis.MEAN)
         
         #print(new1)
-        new1=new1[0:66,:] # 66 index is to an alitutde of close to 32km 
+        new1=new1[0:50,:] # 66 index is to an alitutde of close to 32km 
 
         
         data=new1.data
         lnum1=new1.coord('model_level_number').points
-        lnum_alt=alt_data[0:66]
+        lnum_alt=alt_data[0:50]
         lat1=new1.coord('latitude').points
         x,y=np.meshgrid(lat1,lnum_alt)
         ticks=[1,5,10,20,50,100,200,500,1000,2000,5000,10000,30000,60000,100000,200000]
@@ -139,13 +126,14 @@ for i in flag:
         #ticks5 =  [1e-2,5e-2,1e-1,5e-1,1e0,5e0,1e1,5e1,1e2,5e2,1e3,5e3]
         ticks5 =  [1e-2,5e-2,1e-1,5e-1,1e0,5e0,1e1,5e1,1e2,5e2,1e3]
         #ticks5 =  [1e-1,5e-1,1e0,5e0,1e1,5e1,1e2,5e2,1e3,5e3]
-        
+        ticks5 = [1e2,5e2,1e3,5e3,1e4,5e4,1e5]
        #ticks5_label = ['1e-6','5e-6','1e-5','5e-5','1e-4','5e-4','1e-3','5e-3','1e-2']
         ticks5_label = [str(o) for o in ticks5]
         #plt.contourf(x,y,data,ticks3,vmin=ticks3[0],vmax=ticks3[len(ticks3)-1],cmap=plt.cm.jet,resolution='c')
         #plt.contourf(x,y,data,ticks4,vmin=0,vmax=30,cmap=plt.cm.jet,resolution='c', format = '%.0e')
         #plt.contourf(x,y,data,ticks5,norm=colors.LogNorm(vmin=1e-2,vmax=5e3),cmap='RdYlBu_r',resolution='c', format = '%.0e')
-        plt.contourf(x,y,data,ticks5,norm=colors.LogNorm(vmin=1e-2,vmax=5e3),cmap='RdYlBu_r',resolution='c', format = '%.0e')
+        plt.contourf(x,y,data,ticks5,norm=colors.LogNorm(vmin=1e2,vmax=1e5),cmap='RdYlBu_r',resolution='c', format = '%.0e')
+        #plt.contourf(x,y,data,ticks5,norm=colors.LogNorm(vmin=1e-2,vmax=5e3),cmap='RdYlBu_r',resolution='c', format = '%.0e')
         #plt.contourf(x,y,data,ticks5,norm=colors.LogNorm(vmin=np.min(ticks5),vmax=np.max(ticks5)),cmap='RdYlBu_r',resolution='c', format = '%.0e')
         
 
