@@ -6,284 +6,250 @@ import matplotlib.pyplot as plt
 import iris.coord_categorisation
 import cf_units
 import iris.quickplot as qplt
-import pylab as pl
 
 from mpl_toolkits.basemap import Basemap
 import matplotlib.colors as colors
+from cartopy import config
+import cartopy.crs as ccrs
+import matplotlib as mpl
 from matplotlib.ticker import LogFormatter
-import matplotlib.ticker as ticker
 
+import matplotlib.ticker as mticker
+from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 iris.FUTURE.cell_datetime_objects=True
-
+import plot_func as pltfunc
 
 trial1=iris.cube.CubeList()
 trial2=iris.cube.CubeList()
 
-path = '/group_workspaces/jasmin2/gassp/eeara/CARIBIC/'#ANANTH
 
+def plot_diff(slice1,title,lim1,lim2,step):
+    #plt.figure()
+    plt.figure(figsize=(12, 6))# this works 
+    #plt.figure(figsize=(12, 4.8))# this works 
+    data=slice1.data
+    lon=slice1.coord('longitude').points
+    lat=slice1.coord('latitude').points
+    new_lon=[]
+    for k in range(len(lon)):
+        if lon[k]>180:
+            #temp=lon[k]
+            temp=lon[k]-360
+            new_lon=np.append(new_lon,temp)
+        else:
+            new_lon=np.append(new_lon,lon[k])
+    #lon=lon-180    #basemap correction 
+    #new_lon=temp
 
-#mpath1='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz871/All_months/' # sulphurless with biogenic nucleation ON
-#mpath2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz050/All_months/' # sulphurless planet
-
-mpath1='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz983/2017jan/' # sulphurless with biogenic nucleation ON
-mpath2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz980/2017jan/' # sulphurless planet
-
-mpath1='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca206/2017jan/' # sulphurless with biogenic nucleation ON
-#mpath2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/2017jan/' # new basline sulphurless planet
-mpath2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/2017jan/' # sulphurless planet
-
-mpath1='/gws/nopw/j04/asci/eeara/model_runs/u-ca954/2017jan/' # present day with biogenic nucleation ON
-#mpath2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/2017jan/' # new basline sulphurless planet
-mpath2='/gws/nopw/j04/asci/eeara/model_runs/u-ca439/2017jan/' # present day planet
-
-mpath1='/gws/nopw/j04/asci/eeara/model_runs/u-cb602/All_months/' # present day with biogenic nucleation ON
-#mpath2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/2017jan/' # new basline sulphurless planet
-mpath2='/gws/nopw/j04/asci/eeara/model_runs/u-ca440/All_months/' # present day planet
-
-alt_path='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bf829/L1/'
-#alt_path='/gws/nopw/j04/gassp/hgordon/u-be424-noColinFix/L1/'
-#mpath2='/group_workspaces/jasmin2/gassp/eeara/model_runs/u-bc244/L1/'
-cutoff=2 # this is a radius...12nm is a diameter!!
-
-altitude_path=alt_path+'L1_rad_accsol_Radius_of_mode_accsol.nc'
-cube=iris.load(altitude_path)
-cube=cube[0]
-alt_data=cube.coord('altitude').points
-alt_data=alt_data[:,72,96]
-alt_data=alt_data/1000
-
-def find_nearest_index(array,value):
-    idx = (np.abs(array-value)).argmin()
-    return idx
-
-def cat_func_lat(position):
-    return asl.coord('latitude').nearest_neighbour_index(position)
-
-def cat_func_lon(position):
-    return asl.coord('longitude').nearest_neighbour_index(position)    
-
-def lognormal_cummulative(N,r,rbar,sigma):
-    total=(N/2)*(1+sp.special.erf(np.log(r/rbar)/np.sqrt(2)/np.log(sigma)))
-    return total
-
-sigma=[1.59,1.59,1.40,2.0,1.59,1.59,2.0]
-
-pref=1.013e5
-tref=293.0
-zboltz=1.3807e-23
-staird=pref/(tref*287.058) 
-
-
-def get_model_data(indx,alt,num,mpath): #add variable for cutoff and do logcumtor (easy!)
-
-    #new_mpath = mpath.copy()
-    mpath = mpath[:-11]+'L1/'
-
-    model_aird = iris.load(mpath+'L1_air_density_Density of air.nc')
-    model_aird = model_aird[0]
-    #model_aird = iris.load_cube(mpath+'L1_air_density_Density of air.nc') #kgm-3
+#..............basemap requires lat and lon to be in increasing order
     
+    data_1=data[:,0:96]
+    data_2=data[:,96:]
+    data_21=np.hstack((data_2,data_1))
+
+    new_lon_1=new_lon[0:96]
+    new_lon_2=new_lon[96:]
+    new_lon_21 = np.hstack((new_lon_2, new_lon_1))
+
+
+    data_final=data_21
+    new_lon_final=new_lon_21
+
     
-    #model_acc = iris.load(mpath+'L1_n_accsol_number_of_particles_per_air_molecule_of_soluble_accumulation_mode_aerosol_in_air.nc')#particles/m3
-    #model_nuc = iris.load(mpath+'L1_n_nucsol_number_of_particles_per_air_molecule_of_soluble_nucleation_mode_aerosol_in_air.nc')
-    #model_aitins = iris.load(mpath+'L1_n_aitins_number_of_particles_per_air_molecule_of_insoluble_aitken_mode_aerosol_in_air.nc')
-    #model_ait = iris.load(mpath+'L1_n_aitsol_number_of_particles_per_air_molecule_of_soluble_aitken_mode_aerosol_in_air.nc')
-    #print model_ait,'\n'
-    #model_cor=iris.load(mpath+'L1_n_corsol_number_of_particles_per_air_molecule_of_soluble_coarse_mode_aerosol_in_air.nc')
+    ticks=np.arange(lim1,lim2,step)
+    ticks6 = [1e0,1e3,1e5,1e8,1e10]
+    ticks6_label = ['1e0','1e3','1e5','1e8','1e10']
+    ticks6 = [1e-2,1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9]
+    ticks6_label = ['-1e2','1e0','1e1','1e2','1e3','1e4','1e5','1e6','1e7','1e8','1e9']
+    ticks6 = [1e-33,1e0,1e1,1e2,1e3,1e4,1e5,1e6,1e7,1e8,1e9]
+    ticks6_label = ['-1e2','1e0','1e1','1e2','1e3','1e4','1e5','1e6','1e7','1e8','1e9']
+    ticks6 = [1e-35,1e-30,1e-25,1e-20,1e-15]
+    ticks6_label = ['1e-35','1e-30','1e-25','1e-20','1e-15']
+    ticks6 = [1e-35,1e-32,1e-29,1e-26,1e-23,1e-20,1e-17,1e-14]
+    ticks6_label = ['1e-35','1e-32','1e-29','1e-26','1e-23','1e-20','1e-17','1e-14']
     
-    model_acc = iris.load(mpath+'L1_n_accsol_number_*')#particles/m3
-    model_nuc = iris.load(mpath+'L1_n_nucsol_number_*')
-    model_aitins = iris.load(mpath+'L1_n_aitins_number_*')
-    model_ait = iris.load(mpath+'L1_n_aitsol_number_*')
-    #print model_ait,'\n'
-    model_cor=iris.load(mpath+'L1_n_corsol_number_*')
+    ticks6 = [1e-20,1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1e0]
+    ticks6_label = [str(o) for o in ticks6]
     
+    #ticks6 = np.arange(-15,40,2)/10.0
+    ticks6 = np.arange(lim1,lim2,step)/10.0
+    ticks6_label = [str(o) for o in ticks6]
+    #ticks6_label = ['1e-35','1e-32','1e-29','1e-26','1e-23','1e-20','1e-17','1e-14']
+    #ticks6_label = ['1e-35','1e-30','1e-25','1e-20','1e-15']
+    #ticks6_label = ['-1e2','1e0','1e1','1e2','1e3','1e4','1e5','1e6','1e7','1e8','1e9']
+   # ticks6 = [-1e-22,1e-30,1e-16]
+   # ticks6_label = ['-1e-22','1e-30','1e-16']
     
-    #model_cor = iris.load(mpath,'L1_n_corsol_number_of_particles_per_air_molecule_of_soluble_coarse_mode_aerosol_in_air.nc')
-    #print model_cor,'\n'
-    model_nucrad = iris.load(mpath+'L1_rad_nucsol_Radius_of_mode_nucsol.nc')
-    model_aitrad = iris.load(mpath+'L1_rad_aitsol_Radius_of_mode_aitsol.nc')
-    model_aitirad = iris.load(mpath+'L1_rad_aitins_Radius_of_mode_aitins.nc')
-
-    model_acc=model_acc[0]
-    model_nuc=model_nuc[0]
-    model_aitins=model_aitins[0]
-    model_ait=model_ait[0]
-    model_cor=model_cor[0]
-    model_nucrad=model_nucrad[0]
-    model_aitrad=model_aitrad[0]
-    model_aitirad=model_aitirad[0]
-
-
-
-    model_acc_stp = model_acc*staird/model_aird
-    model_ait_stp = model_ait*staird/model_aird
-    model_cor_stp = model_cor*staird/model_aird
-    model_nuc_stp = model_nuc*staird/model_aird
-    model_aitins_stp = model_aitins*staird/model_aird
-
-
-    model_nuc_thl = model_nuc_stp - model_nuc_stp.copy(lognormal_cummulative(model_nuc_stp.data, cutoff*1.0e-9, model_nucrad.data, sigma[0]))
-    model_ait_thl = model_ait_stp - model_ait_stp.copy(lognormal_cummulative(model_ait_stp.data, cutoff*1.0e-9, model_aitrad.data, sigma[1]))
-    model_aitins_thl = model_aitins_stp - model_aitins_stp.copy(lognormal_cummulative(model_aitins_stp.data, cutoff*1.0e-9, model_aitirad.data, sigma[4]))
+    ax = plt.axes(projection=ccrs.PlateCarree())
+    #data_final = np.where(data_final>1.0,data_final,1e-1)
+    #x=plt.contourf(new_lon_final,lat,data_final,transform=ccrs.PlateCarree(),cmap='RdYlBu_r',levels=ticks)
+    #x=plt.contourf(new_lon_final,lat,data_final,norm=colors.LogNorm(vmin=1e-8,vmax=1e0),transform=ccrs.PlateCarree(),cmap='RdYlBu_r',levels=ticks6)
+    #x=plt.contourf(new_lon_final,lat,data_final,vmin=-1.5,vmax=4.0 ,transform=ccrs.PlateCarree(),cmap='RdYlBu_r',levels=ticks6)
+    x=plt.contourf(new_lon_final,lat,data_final,vmin=lim1/10,vmax=lim2/10 ,transform=ccrs.PlateCarree(),cmap='bwr',levels=ticks6)
+    #x=plt.contourf(new_lon_final,lat,data_final,norm=colors.LogNorm(vmin=pow(10,-35),vmax=1e-15),transform=ccrs.PlateCarree(),cmap='RdYlBu_r',levels=ticks6)
+    norm = mpl.colors.Normalize(vmin=lim1, vmax=lim2)
+    #plt.title(title,fontdict={'fontsize':16})
     
-    model_n = model_nuc_thl+model_ait_thl+model_aitins_thl+model_acc_stp+model_cor_stp
-    #print model_n
-    model_n = model_n.collapsed('time',iris.analysis.MEAN)
-    model_n = model_n/1000000
-    print(model_n)
-    #model
-    model_n.long_name='Particle Number Concentration at STP (cm-3)'
-    model_n.units='cm-3'
-    #take longitudenale mean 
-    long_mean=model_n.collapsed('longitude',iris.analysis.MEAN)
-    slice1=long_mean
-    return slice1
+    plt.title(title,fontsize=18)
+    
+    ax.coastlines()
 
-####################################################################
-var1=[]
-var2=[]
-var3=[]
-var4=[]
-var5=[]
-var6=[]
-var7=[]
-var8=[]
-#f=plt.figure()
-indx=[10,20,30,35,40,45,50,55]
-alt=[3.4,5.1,7.8,9.8,12.1,14.8,18,21.7]
+    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True,linewidth=2, color='black', alpha=0.5, linestyle='--')
+    gl.xlabels_top = False
+    gl.ylabels_right = False
+    #gl.xlines = False
+    gl.xlocator = mticker.FixedLocator([-180, -90, 0, 90, 180])
+    gl.ylocator = mticker.FixedLocator([-90, -45, 0, 45, 90])
+    gl.xformatter = LONGITUDE_FORMATTER
+    gl.yformatter = LATITUDE_FORMATTER
+    gl.xlabel_style = {'size': 15, 'color': 'gray'}
+    gl.xlabel_style = {'color': 'black', 'weight': 'bold'}
+    
+    gl.ylabel_style = {'size': 15, 'color': 'gray'}
+    gl.ylabel_style = {'color': 'black', 'weight': 'bold'}
+    
+    """
+    cbar=plt.colorbar(x,ax=ax,ticks=ticks)
+    cbar.ax.tick_params(labelsize=16)
+    ax.set_aspect('auto')
+    plt.savefig(title+'.png')
+   
+    """
+    cbar = plt.colorbar(x,ax=ax)
+    cbar.set_ticks(ticks6)
+    cbar.set_ticklabels(ticks6_label)
+    cbar.ax.tick_params(labelsize=16)
+    ax.set_aspect('auto')
+#________________________________
 
-factor = 0
 
 
-#for i in range(1):
-flag=[30]
-for i in flag:
+for i in range(1):
 #for i in range(len(alt_data)):
     print('\n File STARTED ')
-    filepath = '/group_workspaces/jasmin2/asci/eeara/model_runs/u-bs405/All_months/'
-    trop_height = iris.load(filepath+'All_months_m01s30i453_Height_at_Tropopause_Level__________.nc')[0]
-    trop_height = trop_height.collapsed('time',iris.analysis.MEAN)
-    trop_height = trop_height.collapsed('longitude',iris.analysis.MEAN)
-    trop_height = trop_height/1000.0
-    
-    cn_file_org = 'All_months_m01s38i437_CN__NUMBER_CONCENTRATION____________.nc' #units are in /cm3
-    nuc_file = 'All_months_m01s38i504_number_concentration_nucleation_mode.nc'
-    ait_file = 'All_months_m01s38i505_number_concentration_aitken_mode.nc'
-    aitins_file = 'All_months_m01s38i508_number_concentration_aitken_insoluble.nc'
-    acc_file = 'All_months_m01s38i506_number_concentration_accumulation_mode.nc'
-    cor_file = 'All_months_m01s38i507_number_concentration_coarse_mode_insoluble.nc' 
-    
-    cn_file = cor_file
-    
-    if cn_file!=cn_file_org:
-        factor = 1e6
-    else:
-        factor = 1
-    
-    #cn_file = '2017jan_m01s38i437_CN__NUMBER_CONCENTRATION____________.nc'
-    
     #if i==0:
-    if i%3==0:
-        #new1=get_model_data(i,alt_data[i],i,mpath1)
-        #new2=get_model_data(i,alt_data[i],i,mpath2)
-         
-        new1 = iris.load(mpath1+cn_file)[0]
-        new2 = iris.load(mpath2+cn_file)[0]
+    #p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-by114/All_months/' #new run
+    #p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-by412/All_months/' #baseline run 
+    # updated suites below 
+    p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz693/All_months/' #new run
+    p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz050/All_months/' #baseline run 
+    
+    #p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cb602/All_months/' #new run
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cb802/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-ca440/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-ca123/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-ca125/All_months/' #baseline run 
+    if i%3==0 and i<49:
+ 
+        cube1=iris.load(p_day+'All_months_m01s01i217_UPWARD_SW_FLUX_ON_LEVELS____________.nc')[1]
+        cube2=iris.load(p_day+'All_months_m01s01i517_CLEAN-AIR_UPWARD_SW_FLUX_ON_LEVELS__.nc')[0]
+        c1   =iris.load(p_day+'All_months_m01s01i519_CLEAR-CLEAN_UPWARD_SW_FLUX_ON_LEVELS.nc')[0]
+
+        cube3_copy = iris.load(p_ind+'All_months_m01s01i217_UPWARD_SW_FLUX_ON_LEVELS____________.nc')[1]
+        cube4_copy = iris.load(p_ind+'All_months_m01s01i517_CLEAN-AIR_UPWARD_SW_FLUX_ON_LEVELS__.nc')[0]
+        c2_copy    = iris.load(p_ind+'All_months_m01s01i519_CLEAR-CLEAN_UPWARD_SW_FLUX_ON_LEVELS.nc')[0]
+        
+        cube3 = cube1.copy()
+        cube4 = cube1.copy()
+        c2 = cube1.copy()
+        cube3.data = cube3_copy.data
+        cube4.data = cube4_copy.data
+        c2.data = c2_copy.data
+        
+        cube5=iris.load(p_day+'All_months_m01s02i217_UPWARD_LW_FLUX_ON_LEVELS____________.nc')[1]
+        cube6=iris.load(p_day+'All_months_m01s02i517_CLEAN-AIR_UPWARD_LW_FLUX_ON_LEVELS__.nc')[0]
+        c3   =iris.load(p_day+'All_months_m01s02i519_CLEAR-CLEAN_UPWARD_LW_FLUX_ON_LEVELS.nc')[0]
+        
+        cube7_copy = iris.load(p_ind+'All_months_m01s02i217_UPWARD_LW_FLUX_ON_LEVELS____________.nc')[1]
+        cube8_copy = iris.load(p_ind+'All_months_m01s02i517_CLEAN-AIR_UPWARD_LW_FLUX_ON_LEVELS__.nc')[0]
+        c4_copy    = iris.load(p_ind+'All_months_m01s02i519_CLEAR-CLEAN_UPWARD_LW_FLUX_ON_LEVELS.nc')[0]
+      
+        
+        cube7 = cube1.copy()
+        cube8 = cube1.copy()
+        c4 = cube1.copy()
+        cube7.data = cube7_copy.data
+        cube8.data = cube8_copy.data
+        c4.data = c4_copy.data
+        
+        
+        cube1.units='W m-2'
+        cube2.units='W m-2'
+        cube3.units='W m-2'
+        cube4.units='W m-2'
+        cube5.units='W m-2'
+        cube6.units='W m-2'
+        cube7.units='W m-2'
+        cube8.units='W m-2'
+        
+        c1.units='W m-2'
+        c2.units='W m-2'
+        c3.units='W m-2'
+        c4.units='W m-2'
        
-        new1 = new1.collapsed('time',iris.analysis.MEAN)
-        #new1 = new1[5,:,:,:]
-        new1 = new1.collapsed('longitude',iris.analysis.MEAN)
-        #new2 = new2[5,:,:,:]
-        new2 = new2.collapsed('time',iris.analysis.MEAN)
-        new2 = new2.collapsed('longitude',iris.analysis.MEAN)
         
+        cube3_copy = cube1.copy()
+        cube4_copy = cube1.copy()
+
+        cube3_copy.data = cube3.data
+        cube4_copy.data = cube4.data
+        
+
+
+        net_sw      = (cube1-cube2)-(cube3-cube4)
+        cloud_sw    = (cube2-c1)-(cube4-c2)
+        net_lw      = (cube5-cube6)-(cube7-cube8)
+        cloud_lw    = (cube6-c3)-(cube8-c4)
+        surf_alb_sw = (c1-c2)
+        surf_alb_lw = (c3-c4)
+        
+        di_eff_2 = cube1-cube3
+          
+        #di_eff.units = 'W m-2'
+
+        di_eff = net_sw.collapsed('time',iris.analysis.MEAN)
+        in_eff = cloud_sw.collapsed('time',iris.analysis.MEAN)
+        di_eff_2 = di_eff_2.collapsed('time',iris.analysis.MEAN)
+       
+        #di_eff.units = 'W m-2'
+
+        di_eff = di_eff*-1
+        in_eff = in_eff*-1
+        dir_title = 'Direct forcing (W/m2): (PD) -(PI)'
+        ind_title = 'Indirect forcing (W/m2):(PD)-(PI)'
+        di_eff.units = 'W m-2'
+        in_eff.units = 'W m-2'
+        image_path = '/home/users/eeara/no_sulphur_new/images/' 
+        
+        print('max value dir effect = ', np.max(di_eff.data))
+        print('min value dir effect = ', np.min(di_eff.data))
+        print('mean value dir effect = ', np.mean(di_eff.data))
+        #plot_diff(di_eff,dir_title,-120,121,10)
+        pltfunc.plot_diff_3(di_eff,dir_title,-5,5,'coolwarm')
+        #pltfunc.plot_diff(di_eff,dir_title,np.min(di_eff.data),np.max(di_eff.data),'seismic')
+        print('max value indir effect = ', np.max(in_eff.data))
+        print('min value indir effect = ', np.min(in_eff.data))
+        print('mean value indir effect = ', np.mean(in_eff.data))
+        plt.savefig(image_path+'dir_effect_nosulphur.png',dpi = 500)
+        #plot_diff(in_eff,ind_title,-550,551,100)
+        #pltfunc.plot_diff(in_eff,ind_title,np.min(in_eff.data),np.max(in_eff.data),'seismic')
+        pltfunc.plot_diff_3(in_eff,ind_title,-5,5,'coolwarm')
+        plt.savefig(image_path + 'indir_effect_nosulphur_pdpi.png',dpi = 500)
+
+        
+        print('Direct radiative forcing -- SHORTWAVE , ',np.mean(di_eff.data))
+        print('Direct radiative forcing -- LONGWAVE  , ',np.mean(in_eff.data))
+        #print 'Surface albedo forcing  -- SHORTWAVE  , ',np.mean(surf_alb_sw)
+        #print 'Surface albedo forcing  -- LONGWAVE   , ',np.mean(surf_alb_lw) 
          
-
-        print('this is longitudenal mean\n\n', new1,'\n\n')
-        new1=new1[0:66,:]
-        new2=new2[0:66,:]
- #       old1=get_model_data(i,alt_data[i],i,mpath2)
- #       diff=((new1-old1)/old1)*100
-      #  data, lat, lon = file_save(new1,i,alt_data[i])
-        
-        #qplt.contourf(new1)
-        #plt.show()
-        diff = (new1.data-new2.data)/factor # biogenic - baseline simulation
-         
-        #data=new1.data
-        data = diff.data
-        lnum1=new1.coord('model_level_number').points
-        
-        #data= np.where(data>0,data,1e-1)
-        #data= np.where((data<-1e1 & data>0 ,data,1e-1))
-                    
-           
-            
-        lnum_alt=alt_data[0:66]
-        lat1=new1.coord('latitude').points
-        x,y=np.meshgrid(lat1,lnum_alt)
-        #plt.figure()
-        #im=plt.imshow(data)   
-        #plt.contourf(x,y,data)
-        ticks=[1,5,10,20,50,100,200,500,1000,2000,5000,10000,30000,60000,100000,200000]
-        #ticks3=[1e0,5e0,1e1,2e1,5e1,1e2,2e2,5e2,1e3,2e3,5e3,1e4,3e4,6e4,1e5,2e5]
-        #ticks3       = [1e0,1e1,5e1,1e2,2.5e2,5e2,7.5e2,1e3,2.5e3,5e3,7.5e3,1e4,2.5e4,5e4,7.5e4,1e5,2.5e5]
-        #ticks3       = [1e0,1e1,5e1,1e2,2.5e2,5e2,7.5e2,1e3,2.5e3,5e3,7.5e3,1e4,2.5e4,5e4,7.5e4,1e5,2.5e5]
-        ticks3       = [1e-2,1e1,5e1,1e2,2.5e2,5e2,7.5e2,1e3,2.5e3,5e3,7.5e3,1e4,2.5e4,5e4,8e4]
-        #ticks3_label = ['1','10','50',u'10\u00b2',u'2.5 x 10\u00b2',u'5 x 10\u00b2',u'7.5 x 10\u00b2',u'10\u00b3',u'2.5 x 10\u00b3',u'5 x 10\u00b3',u'7.5 x 10\u00b3',u'10\u2074',u'2.5 x 10\u2074',u'5 x 10\u2074',u'7.5 x 10\u2074',u'10\u2075',u'2 x 10\u2075']
-        ticks3_label = ['negative','10','50',u'10\u00b2',u'2.5 x 10\u00b2',u'5 x 10\u00b2',u'7.5 x 10\u00b2',u'10\u00b3',u'2.5 x 10\u00b3',u'5 x 10\u00b3',u'7.5 x 10\u00b3',u'10\u2074',u'2.5 x 10\u2074',u'5 x 10\u2074',u'8 x 10\u2074']
-        #ticks3_label = [str(o) for o in ticks3]
-        ticks3       = [1e-5,1e-4,1e-3,1e-2,1e-1,1e1,5e1,1e2,2.5e2,5e2,7.5e2,1e3,2.5e3,5e3,7.5e3,1e4,2.5e4,5e4,8e4]
-        #ticks3_label = ['1','10','50',u'10\u00b2',u'2.5 x 10\u00b2',u'5 x 10\u00b2',u'7.5 x 10\u00b2',u'10\u00b3',u'2.5 x 10\u00b3',u'5 x 10\u00b3',u'7.5 x 10\u00b3',u'10\u2074',u'2.5 x 10\u2074',u'5 x 10\u2074',u'7.5 x 10\u2074',u'10\u2075',u'2 x 10\u2075']
-        ticks3_label = ['-1e-5','-1e-4','-1e-3','-1e-2','-1e-1','10','50',u'10\u00b2',u'2.5 x 10\u00b2',u'5 x 10\u00b2',u'7.5 x 10\u00b2',u'10\u00b3',u'2.5 x 10\u00b3',u'5 x 10\u00b3',u'7.5 x 10\u00b3',u'10\u2074',u'2.5 x 10\u2074',u'5 x 10\u2074',u'8 x 10\u2074']
-        flag2=[1,5,10,20,50,100,200,500,1000,2000,5000,10000,30000,60000,100000,200000]
-        #plt.contourf(x,y,data,cmap=,resolution='c')
-        
-       # ticks=[1e0,5e0,1e1,2e1,5e1,1e2,2e2,5e2,1e3,2e3,5e3,1e4,3e4,6e4,1e5]
-        ticks4 = [-1e3,-1e2,-1e1,1e1,1e2,1e3] 
-        ticks4 = [-5e3,-1e3,-5e2,-1e2,-5e1,-1e1,1e1,5e1,1e2,5e2,1e3,5e3] 
-        ticks4_label = [str(o) for o in ticks4]
-        flag2=ticks
-        
-        #plt.contourf(x,y,data,ticks4,norm=colors.SymLogNorm(linthresh = 1e1,linscale = 1e0,vmin=-1e3,vmax=1e3),cmap='RdYlBu_r', format = '%.0e')
-        #plt.contourf(x,y,data,ticks3,norm=colors.LogNorm(vmin=1e-5,vmax=8e4),cmap='RdYlBu_r', format = '%.0e')
-        plt.contourf(x,y,data,ticks4,norm=colors.SymLogNorm(linthresh = 1e1,linscale = 1e0,vmin=-5e3,vmax=5e3),cmap='RdYlBu_r', format = '%.0e')
-        #plt.contourf(x,y,data,ticks3,norm=colors.LogNorm(vmin=pow(10,1),vmax=pow(10,6)),cmap=plt.cm.jet,resolution='c', format = '%.0e')
-        #plt.clim((pow(10,3),pow(10,7)))
-        plt.plot(lat1,trop_height.data,'k--')
-        mn=0.1
-        mx=100000
-        md=(mx-mn)/2
-        print('\nThe maximum value of particle number is      = ', np.max(data))
-        print('\nThe minimum value of particle number is      = ', np.min(data))
-        print('\nThe mean value of particle number is         = ', np.mean(data))
-        
-        #plt.contourf(x,y,data,cmap=,resolution='c')
-        formatter = LogFormatter(10, labelOnlyBase=False)
-        cbar=plt.colorbar()
-        #cbar=plt.colorbar(ticks=ticks3, format=formatter)
-        cbar.set_ticks(ticks4)
-
-
-        #ticks3=['1','5','10','20','50','1E2','2e2','5e2','1e3','2e3','5e3','1e4','3e4','6e4','1e5','2e5']
-
-        cbar.set_ticklabels(ticks4_label)
-        #cbar.set_ticklabels(ticks3_label)
-        
-        #plt.clim((pow(10,3),pow(10,7)))
-        plt.xlabel('latitude')
-        plt.ylabel('altitude (km)')
-        #plt.title('Total Particle number concentration (cm'+u'\u207B\u00B3'+')')
-        #plt.title('N_Total change (sulphurless+purebiogenic) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
-        plt.title('Coarse mode change (sulphurless + biogen) - (sulphurless)(cm'+u'\u207B\u00B3'+')' )
-
-        img_filepath = '/home/users/eeara/no_sulphur_new/images/'
-        plt.savefig(img_filepath+'cor_sulphurless_purebiogenic.png',dpi = 500)
         plt.show()
+
+        # ------------------------------------------------------------------
         
-        print(new1)       
+
+
         
 
 

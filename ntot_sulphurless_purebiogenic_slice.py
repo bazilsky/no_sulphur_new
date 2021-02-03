@@ -198,7 +198,7 @@ alt=[3.4,5.1,7.8,9.8,12.1,14.8,18,21.7]
 
 data_level=12 # cloud base level = 1.3km
 #data_level=26 # cloud base level = 5.2km
-data_level=38 # cloud base level = 11.2kmkm
+#data_level=38 # cloud base level = 11.2kmkm
 
 for i in range(1):
 #for i in range(len(alt_data)):
@@ -209,6 +209,9 @@ for i in range(1):
     
     p_day1='/group_workspaces/jasmin2/asci/eeara/model_runs/u-by921/All_months/' # this is the baseline
     p_day2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-by920/All_months/' # new run  
+    
+    p_day1='/gws/nopw/j04/asci/eeara/model_runs/u-ca440/All_months/' # this is the baseline
+    p_day2='/gws/nopw/j04/asci/eeara/model_runs/u-cb602/All_months/' # new run  
     
     p_day1='/gws/nopw/j04/asci/eeara/model_runs/u-ca440/All_months/' # this is the baseline
     p_day2='/gws/nopw/j04/asci/eeara/model_runs/u-cb602/All_months/' # new run  
@@ -241,13 +244,10 @@ for i in range(1):
         print ('the lowest is = ', np.min(c.data))
         
         #temp_str='Change in Ntot at 11km (cm'+u'\u207B\u00B3'+')'
-        temp_str='Change in Ntot at 11km (cm'+u'\u207B\u00B3'+')'
-        #plot_diff(c,temp_str,-100,31,10)
-        #plot_diff(c,temp_str,-4000,4000,500) # for cloud base
-        #plot_diff(c,temp_str,-5000,5001,500) # for 5km
-        #plot_diff(c,temp_str,-10000,10001,1000) # for 11km
-        plot_diff(c,temp_str,-600,601,100) # for 11km
-        #plot_diff(c,temp_str,-100,101,20) # for 1km
+        temp_str='Change in Ntot at 1km (cm'+u'\u207B\u00B3'+')-OLD'
+        plot_diff(c,temp_str,0,401,50) # for 1km
+        #plot_diff(c,temp_str,0,2001,200) # for 11km
+        #plot_diff(c,temp_str,-600,601,100) # for 11km
         print ('max = ', np.max(c)) 
         print ('min = ', np.min(c))
         image_filepath = '/home/users/eeara/no_sulphur_new/images/'

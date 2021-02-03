@@ -135,7 +135,8 @@ for i in range(1):
     p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz693/All_months/' #new run
     p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz050/All_months/' #baseline run 
     
-    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cb602/All_months/' #new run
+    #p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cb602/All_months/' #new run
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cb802/All_months/' #new run
     p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-ca440/All_months/' #baseline run 
     if i%3==0 and i<49:
  
