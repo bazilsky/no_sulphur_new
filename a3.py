@@ -129,16 +129,26 @@ for i in range(1):
 #for i in range(len(alt_data)):
     print('\n File STARTED ')
     #if i==0:
-    #p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bf834/All_months/'
-    #p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bf835/All_months/'
-    p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-by114/All_months/' #new run
-    p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-by412/All_months/' #baseline run 
+    #p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-by114/All_months/' #new run
+    #p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-by412/All_months/' #baseline run 
     # updated suites below 
-    p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz050/All_months/' #new run
-    p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz049/All_months/' #baseline run 
+    p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz693/All_months/' #new run
+    p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz050/All_months/' #baseline run 
     
-    p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca123/All_months/' #new run
-    p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca124/All_months/' #baseline run 
+    #p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cb602/All_months/' #new run
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cb802/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-ca440/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-ca123/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-ca124/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cc066/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc068/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-bf829/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-bf830/All_months/' #baseline run 
+    
+    
     if i%3==0 and i<49:
  
         cube1=iris.load(p_day+'All_months_m01s01i217_UPWARD_SW_FLUX_ON_LEVELS____________.nc')[1]
@@ -206,39 +216,42 @@ for i in range(1):
         di_eff_2 = cube1-cube3
           
         #di_eff.units = 'W m-2'
-
-        di_eff = net_sw.collapsed('time',iris.analysis.MEAN)
-        in_eff = cloud_sw.collapsed('time',iris.analysis.MEAN)
-        di_eff_2 = di_eff_2.collapsed('time',iris.analysis.MEAN)
-       
+        
+        #di_eff = net_sw.collapsed('time',iris.analysis.MEAN)
+        #in_eff = cloud_sw.collapsed('time',iris.analysis.MEAN)
+        #di_eff_2 = di_eff_2.collapsed('time',iris.analysis.MEAN)
+        
+        di_eff = net_sw[6,:,:,:]
+        in_eff = cloud_sw[6,:,:,:]
+        di_eff_2 = di_eff_2[6,:,:,:]
         #di_eff.units = 'W m-2'
 
         di_eff = di_eff*-1
         in_eff = in_eff*-1
-        dir_title = 'Direct effect (W/m2) - present day'
-        ind_title = 'Indirect effect (W/m2) - present day'
+        dir_title = 'Direct forcing (W/m2): (PD) -(PI)'
+        ind_title = 'Indirect forcing (W/m2):(PD)-(PI)'
         di_eff.units = 'W m-2'
         in_eff.units = 'W m-2'
-        
+        image_path = '/home/users/eeara/no_sulphur_new/images/' 
         
         print('max value dir effect = ', np.max(di_eff.data))
         print('min value dir effect = ', np.min(di_eff.data))
         print('mean value dir effect = ', np.mean(di_eff.data))
         #plot_diff(di_eff,dir_title,-120,121,10)
-        pltfunc.plot_diff(di_eff,dir_title,-14,14,'seismic')
+        pltfunc.plot_diff_3(di_eff,dir_title,-7,7,'coolwarm')
         #pltfunc.plot_diff(di_eff,dir_title,np.min(di_eff.data),np.max(di_eff.data),'seismic')
         print('max value indir effect = ', np.max(in_eff.data))
         print('min value indir effect = ', np.min(in_eff.data))
         print('mean value indir effect = ', np.mean(in_eff.data))
-        plt.savefig('dir_effect_nosulphur_2.eps',dp1 = 500)
+        plt.savefig(image_path+'dir_effect_nosulphur.png',dpi = 500)
         #plot_diff(in_eff,ind_title,-550,551,100)
         #pltfunc.plot_diff(in_eff,ind_title,np.min(in_eff.data),np.max(in_eff.data),'seismic')
-        pltfunc.plot_diff(in_eff,ind_title,-45,45,'seismic')
-        plt.savefig('indir_effect_nosulphur_2.eps',dp1 = 500)
+        pltfunc.plot_diff_3(in_eff,ind_title,-7,7,'coolwarm')
+        plt.savefig(image_path + 'indir_effect_nosulphur_pdpi.png',dpi = 500)
 
         
-        print('mean direct forcing  ',np.mean(di_eff.data))
-        print('mean indirect forcing ',np.mean(in_eff.data))
+        print('Direct radiative forcing -- SHORTWAVE , ',np.mean(di_eff.data))
+        print('Direct radiative forcing -- LONGWAVE  , ',np.mean(in_eff.data))
         #print 'Surface albedo forcing  -- SHORTWAVE  , ',np.mean(surf_alb_sw)
         #print 'Surface albedo forcing  -- LONGWAVE   , ',np.mean(surf_alb_lw) 
          

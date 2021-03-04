@@ -139,8 +139,8 @@ for i in range(1):
     
     p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca206/All_months/' #sulphurless + purebiogenic
     p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/All_months/' #new sulphurless planet
-    p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/All_months/' #sulphurless + purebiogenic
-    p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca123/All_months/' #baseline present day
+    #p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/All_months/' #sulphurless + purebiogenic
+    #p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca123/All_months/' #baseline present day
     if i%3==0 and i<49:
  
         cube1=iris.load(p_day+'All_months_m01s01i217_UPWARD_SW_FLUX_ON_LEVELS____________.nc')[1]
@@ -220,8 +220,8 @@ for i in range(1):
         dir_title = 'Direct effect (W/m2) (sulphurless + biogenic) - (sulphurless) '
         ind_title = 'Indirect effect (W/m2): (sulphurless + biogenic) - (sulphurless) '
         
-        dir_title = 'Direct effect (W/m2) (sulphurless - present day)'
-        ind_title = 'Indirect effect (W/m2)(sulphurless - present day) '
+        #dir_title = 'Direct effect (W/m2) (sulphurless - present day)'
+        #ind_title = 'Indirect effect (W/m2)(sulphurless - present day) '
         di_eff.units = 'W m-2'
         in_eff.units = 'W m-2'
         
@@ -229,14 +229,14 @@ for i in range(1):
         print('max value dir effect = ', np.max(di_eff.data))
         print('min value dir effect = ', np.min(di_eff.data))
         print('mean value dir effect = ', np.mean(di_eff.data))
-        #pltfunc.plot_diff(di_eff,dir_title,-2,2,'coolwarm')
-        pltfunc.plot_diff(di_eff,dir_title,-14,14,'coolwarm')
+        pltfunc.plot_diff(di_eff,dir_title,-2,2,'coolwarm')
+       # pltfunc.plot_diff(di_eff,dir_title,-14,14,'coolwarm')
         print('max value indir effect = ', np.max(in_eff.data))
         print('min value indir effect = ', np.min(in_eff.data))
         print('mean value indir effect = ', np.mean(in_eff.data))
         plt.savefig('dir_effect_nosulphur_2.eps',dp1 = 500)
-        #pltfunc.plot_diff(in_eff,ind_title,-10,10,'coolwarm')
-        pltfunc.plot_diff(in_eff,ind_title,-45,45,'coolwarm')
+        pltfunc.plot_diff(in_eff,ind_title,-10,10,'coolwarm')
+        #pltfunc.plot_diff(in_eff,ind_title,-45,45,'coolwarm')
         plt.savefig('indir_effect_nosulphur_2.eps',dp1 = 500)
 
         

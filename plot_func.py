@@ -310,7 +310,7 @@ def plot_diff_3(slice1,title,lim1,lim2,col_bar):
     norm = mpl.colors.Normalize(vmin=lim1, vmax=lim2)
     #plt.title(title,fontdict={'fontsize':16})
     
-    plt.title(title,fontsize=24)
+    plt.title(title,fontsize=13)
     
     ax.coastlines()
 

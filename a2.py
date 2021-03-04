@@ -91,7 +91,7 @@ def plot_diff(slice1,title,lim1,lim2,step):
     norm = mpl.colors.Normalize(vmin=lim1, vmax=lim2)
     #plt.title(title,fontdict={'fontsize':16})
     
-    plt.title(title,fontsize=18)
+    plt.title(title,fontsize=12)
     
     ax.coastlines()
 
@@ -141,6 +141,35 @@ for i in range(1):
     
     p_day='/gws/nopw/j04/asci/eeara/model_runs/u-ca123/All_months/' #new run
     p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-ca125/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cc066/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc068/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-bf829/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-bf830/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cc113/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc114/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cc095/All_months/' #new run
+    #p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc167/All_months/' #baseline run 
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc110/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cc095/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc167/All_months/' #baseline run 
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cc356/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc357/All_months/' #baseline run 
+    #p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc265/All_months/' #baseline run 
+    
+    #p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cc301/All_months/' #new run
+    #p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc167/All_months/' #baseline run 
+    #p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc302/All_months/' #baseline run 
+    suite_id = ['u-cc364','u-cc366']
+    suite_str = ['(PI_sulphurless)','(PI_sulphurless_biogen)']
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/'+suite_id[1]+'/All_months/' #new run
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/'+suite_id[0]+'/All_months/' #baseline run 
+    
     if i%3==0 and i<49:
  
         cube1=iris.load(p_day+'All_months_m01s01i217_UPWARD_SW_FLUX_ON_LEVELS____________.nc')[1]
@@ -217,8 +246,11 @@ for i in range(1):
 
         di_eff = di_eff*-1
         in_eff = in_eff*-1
-        dir_title = 'Direct forcing (W/m2): (PD) -(PI)'
-        ind_title = 'Indirect forcing (W/m2):(PD)-(PI)'
+        suite_diff = suite_str[1]+'-'+suite_str[0]
+        dir_title = 'Direct forcing (W/m2): '+suite_diff
+        ind_title = 'Indirect forcing (W/m2): '+suite_diff
+        dir_title = 'Direct radiative effect  (W/m2): '+suite_diff
+        ind_title = 'Indirect radiative effect  (W/m2): '+suite_diff
         di_eff.units = 'W m-2'
         in_eff.units = 'W m-2'
         image_path = '/home/users/eeara/no_sulphur_new/images/' 
@@ -227,7 +259,7 @@ for i in range(1):
         print('min value dir effect = ', np.min(di_eff.data))
         print('mean value dir effect = ', np.mean(di_eff.data))
         #plot_diff(di_eff,dir_title,-120,121,10)
-        pltfunc.plot_diff_3(di_eff,dir_title,-5,5,'coolwarm')
+        pltfunc.plot_diff_3(di_eff,dir_title,-10,10,'coolwarm')
         #pltfunc.plot_diff(di_eff,dir_title,np.min(di_eff.data),np.max(di_eff.data),'seismic')
         print('max value indir effect = ', np.max(in_eff.data))
         print('min value indir effect = ', np.min(in_eff.data))
@@ -235,7 +267,7 @@ for i in range(1):
         plt.savefig(image_path+'dir_effect_nosulphur.png',dpi = 500)
         #plot_diff(in_eff,ind_title,-550,551,100)
         #pltfunc.plot_diff(in_eff,ind_title,np.min(in_eff.data),np.max(in_eff.data),'seismic')
-        pltfunc.plot_diff_3(in_eff,ind_title,-5,5,'coolwarm')
+        pltfunc.plot_diff_3(in_eff,ind_title,-40,40,'coolwarm')
         plt.savefig(image_path + 'indir_effect_nosulphur_pdpi.png',dpi = 500)
 
         

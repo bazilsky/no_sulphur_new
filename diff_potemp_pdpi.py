@@ -98,7 +98,7 @@ def plot_diff(slice1,title,lim1,lim2,step):
     ticks6 = [1e-20,1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1e0]
     ticks6 = [-300,-250,-200,-150,-100,-50,0,50] # this is a percentage change plot
     ticks6 = [-100,-90,-80,-70,-60,-50,-40,-30,-20,-10,0] # this is a percentage change plot
-    ticks6 = np.arange(-25,26,5)/10.0
+    ticks6 = np.arange(-10,11,2)/10.0
     ticks6_label = [str(o) for o in ticks6]
     #ticks6_label = ['1e-35','1e-32','1e-29','1e-26','1e-23','1e-20','1e-17','1e-14']
     #ticks6_label = ['1e-35','1e-30','1e-25','1e-20','1e-15']
@@ -110,7 +110,7 @@ def plot_diff(slice1,title,lim1,lim2,step):
     #data_final = np.where(data_final>1.0,data_final,1e-1)
     #x=plt.contourf(new_lon_final,lat,data_final,transform=ccrs.PlateCarree(),cmap='RdYlBu_r',levels=ticks)
     #x=plt.contourf(new_lon_final,lat,data_final,norm=colors.LogNorm(vmin=1e-8,vmax=1e0),transform=ccrs.PlateCarree(),cmap='RdYlBu_r',levels=ticks6)
-    x=plt.contourf(new_lon_final,lat,data_final,vmin=-2.5,vmax=2.5,transform=ccrs.PlateCarree(),cmap='seismic',levels=ticks6)
+    x=plt.contourf(new_lon_final,lat,data_final,vmin=np.min(ticks6),vmax=np.max(ticks6),transform=ccrs.PlateCarree(),cmap='seismic',levels=ticks6)
     #x=plt.contourf(new_lon_final,lat,data_final,norm=colors.LogNorm(vmin=pow(10,-35),vmax=1e-15),transform=ccrs.PlateCarree(),cmap='RdYlBu_r',levels=ticks6)
     norm = mpl.colors.Normalize(vmin=lim1, vmax=lim2)
     #plt.title(title,fontdict={'fontsize':16})
@@ -173,7 +173,7 @@ def get_model_data(mpath,data_level):
     model_n = ccn_data
     model_n=model_n.collapsed('time',iris.analysis.MEAN)
     #model_n=model_n.collapsed('model_level_number',iris.analysis.SUM) 
-    model_slice = model_n[0,:,:]
+    model_slice = model_n[12,:,:]
     #model_n = model_n*16*1e-12*(365*24*3600)
     #model_n=model_n[data_level,:,:]
     #model_n = model_n/1000000
@@ -206,8 +206,8 @@ for i in range(1):
     #print '\n File STARTED '
     #if i==0:
 
-    p_day1='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bt676/All_months/'  # baseline model run u-bs793 is the new baseline .. with temperature nudging turned off
-    p_day2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bt717/All_months/'  # new model run
+    p_day1='/gws/nopw/j04/asci/eeara/model_runs/u-ca125/All_months/'  # baseline model run u-bs793 is the new baseline .. with temperature nudging turned off
+    p_day2='/gws/nopw/j04/asci/eeara/model_runs/u-ca123/All_months/'  # new model run
 
     if i%3==0 and i<49:
         
@@ -231,7 +231,7 @@ for i in range(1):
         print('the lowest is = ', np.min(c.data))
         print('mean temperature of baseline   = ', np.mean(a.data))
         print('mean temperature of no-sulphur = ', np.mean (b.data))
-        temp_str='Change in near surface potential temperature(K)'
+        temp_str='Change in potential temperature(K) at 1km  (PD - PI)'
         #c.data=np.where(c.data>=0,c.data,1e-20) #IMPORTANT LINE TO MASK UNNCESSARY DATA
         plot_diff(c,temp_str,1e-20,1e0,20)
         

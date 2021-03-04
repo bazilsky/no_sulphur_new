@@ -209,8 +209,8 @@ for i in range(1):
 
         di_eff = di_eff*-1
         in_eff = in_eff*-1
-        dir_title = 'Direct effect (W/m2) - preindustrial'
-        ind_title = 'Indirect effect (W/m2) - preindustrial'
+        dir_title = 'Direct effect (W/m2): PI_sulphurless - PI'
+        ind_title = 'Indirect effect (W/m2): PI_sulphurless - PI'
         di_eff.units = 'W m-2'
         in_eff.units = 'W m-2'
         
@@ -219,14 +219,14 @@ for i in range(1):
         print('min value dir effect = ', np.min(di_eff.data))
         print('mean value dir effect = ', np.mean(di_eff.data))
         #plot_diff(di_eff,dir_title,-120,121,10)
-        pltfunc.plot_diff(di_eff,dir_title,-14,14,'seismic')
+        pltfunc.plot_diff(di_eff,dir_title,-14,14,'coolwarm')
         #pltfunc.plot_diff(di_eff,dir_title,np.min(di_eff.data),np.max(di_eff.data),'seismic')
         print('max value indir effect = ', np.max(in_eff.data))
         print('min value indir effect = ', np.min(in_eff.data))
         print('mean value indir effect = ', np.mean(in_eff.data))
         plt.savefig('dir_effect_nosulphur_2.eps',dp1 = 500)
         #plot_diff(in_eff,ind_title,-550,551,100)
-        pltfunc.plot_diff(in_eff,ind_title,-45,45,'seismic')
+        pltfunc.plot_diff(in_eff,ind_title,-45,45,'coolwarm')
         #pltfunc.plot_diff(in_eff,ind_title,np.min(in_eff.data),np.max(in_eff.data),'seismic')
         plt.savefig('indir_effect_nosulphur_2.eps',dp1 = 500)
 

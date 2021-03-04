@@ -215,6 +215,9 @@ for i in range(1):
 
     p_day1='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca179/All_months/' # this is the baseline
     p_day2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-ca206/All_months/' # new run  
+    
+    p_day1='/gws/nopw/j04/asci/eeara/model_runs/u-ca125/All_months/' # this is the baseline
+    p_day2='/gws/nopw/j04/asci/eeara/model_runs/u-ca123/All_months/' # new run  
 
     #p_ind1='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bf521/L1/'
     #p_ind2='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bf586/L1/'
@@ -244,13 +247,13 @@ for i in range(1):
         print ('the highest is = ', np.max(c.data))
         print ('the lowest is = ', np.min(c.data))
         
-        temp_str='Change in CDNC at 1km (cm'+u'\u207B\u00B3'+')'
+        temp_str='Change in CDNC at 1km (cm'+u'\u207B\u00B3'+') PD - PI'
         #plot_diff(c,temp_str,-100,31,10)
         #plot_diff(c,temp_str,-4000,4000,500) # for cloud base
         #plot_diff(c,temp_str,-5000,5001,500) # for 5km
         #plot_diff(c,temp_str,-10000,10001,1000) # for 11km
         #plot_diff(c,temp_str,-20,21,5) # for 1km
-        plot_diff(c,temp_str,-6,7,1) # for 3km
+        plot_diff(c,temp_str,-20,101,10) # for 3km
         #plot_diff(c,temp_str,-5,6,1) # for 6km
         #plot_diff(c,temp_str,-5,6,1) # for 9km
         print ('max = ', np.max(c)) 

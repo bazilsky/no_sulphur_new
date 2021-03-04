@@ -133,6 +133,9 @@ for i in range(1):
     #p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bf835/All_months/'
     p_day='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz147/All_months/' #PD + biogenic
     p_ind='/group_workspaces/jasmin2/asci/eeara/model_runs/u-bz049/All_months/' #PD baseline sim
+    
+    p_day='/gws/nopw/j04/asci/eeara/model_runs/u-cc304/All_months/' #PD + biogenic
+    p_ind='/gws/nopw/j04/asci/eeara/model_runs/u-cc301/All_months/' #PD baseline sim
     if i%3==0 and i<49:
  
         cube1=iris.load(p_day+'All_months_m01s01i217_UPWARD_SW_FLUX_ON_LEVELS____________.nc')[1]
